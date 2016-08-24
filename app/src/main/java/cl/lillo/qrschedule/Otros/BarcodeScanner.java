@@ -17,6 +17,7 @@ import android.widget.FrameLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import net.sourceforge.jtds.jdbc.DateTime;
 import net.sourceforge.zbar.Config;
 import net.sourceforge.zbar.Image;
 import net.sourceforge.zbar.ImageScanner;
@@ -24,6 +25,7 @@ import net.sourceforge.zbar.Symbol;
 import net.sourceforge.zbar.SymbolSet;
 
 import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.HashSet;
 import java.util.Set;
 
@@ -177,10 +179,26 @@ public class BarcodeScanner extends AppCompatActivity {
                     if (largo < listaFinal.length) {
                         pop();
                         largo = listaFinal.length;
+                        Calendar c = Calendar.getInstance();
+                        int day = c.get(Calendar.DAY_OF_MONTH);
+                        String dia = "" + day;
+                        int month = c.get(Calendar.MONTH) + 1;
+                        String mes = "" + month;
+                        int year = c.get(Calendar.YEAR);
+
+                        if (day < 10)
+                            dia = "0" + day;
+                        if (month < 10)
+                            mes = "0" + mes;
+
+                        String fecha = dia + "/" + mes + "/" + year;
+                        int hour = c.get(Calendar.HOUR_OF_DAY);
+                        int min = c.get(Calendar.MINUTE);
+                        String hora = hour + ":" + min;
                         if (entrada)
-                            showAlertDialog("Entrada: " + scanResult);
+                            showAlertDialog("Entrada: " + scanResult + "\nFecha: " + fecha + "\nHora:" + hora);
                         else
-                            showAlertDialog("Salida: " + scanResult);
+                            showAlertDialog("Salida: " + scanResult + "\nFecha: " + fecha + "\nHora:" + hora);
                     }
 
                     barcodeScanned = true;
@@ -222,6 +240,13 @@ public class BarcodeScanner extends AppCompatActivity {
                 .setPositiveButton("OK", new DialogInterface.OnClickListener() {
                     public void onClick(DialogInterface dialog, int which) {
                         Toast.makeText(BarcodeScanner.this, "Asistencia registrada", Toast.LENGTH_SHORT).show();
+                    }
+                })
+                .setNegativeButton("Cancelar", new DialogInterface.OnClickListener() {
+                    public void onClick(DialogInterface dialog, int which) {
+                        Toast.makeText(BarcodeScanner.this, "Asistencia no registrada", Toast.LENGTH_SHORT).show();
+                        largo = 0;
+
                     }
                 }).show();
     }
